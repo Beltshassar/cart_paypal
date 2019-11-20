@@ -1,5 +1,5 @@
 {
-    "name": "extcode/cart-quickpay",
+    "name": "imhlab/cart-quickpay",
     "type": "typo3-cms-extension",
     "description": "Shopping Cart(s) for TYPO3 - QuickPay Payment Provider",
     "homepage": "",

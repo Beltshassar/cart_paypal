@@ -1,4 +1,6 @@
-# Cart PayPal
+# Cart QuickPay
+
+## DEVELOPMENT IN PROGRESS
 
 Cart is a small but powerful extension which "solely" adds a shopping cart to your TYPO3 installation.
 Cart PayPal is a payment provider and implements the PayPal IPN message service.

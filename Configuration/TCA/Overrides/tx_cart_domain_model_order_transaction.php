@@ -2,7 +2,7 @@
 
 defined('TYPO3_MODE') or die();
 
-$_LLL = 'LLL:EXT:cart_paypal/Resources/Private/Language/locallang_db.xlf';
+$_LLL = 'LLL:EXT:cart_quickpay/Resources/Private/Language/locallang_db.xlf';
 
 $GLOBALS['TCA']['tx_cart_domain_model_order_transaction']['columns']['status']['config']['items'][] =
     [$_LLL . ':tx_cart_domain_model_order_transaction.status.completed', 'completed'];

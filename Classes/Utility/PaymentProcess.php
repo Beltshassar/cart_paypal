@@ -1,6 +1,6 @@
 <?php
 
-namespace Extcode\CartPaypal\Utility;
+namespace imhlab\CartQuickPay\Utility;
 
 use Extcode\Cart\Domain\Repository\CartRepository;
 use Extcode\Cart\Domain\Repository\Order;
@@ -13,8 +13,8 @@ use TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager;
 
 class PaymentProcess
 {
-    const PAYPAL_API_SANDBOX = 'https://www.sandbox.paypal.com/webscr?';
-    const PAYPAL_API_LIVE = 'https://www.paypal.com/webscr?';
+    const QUICKPAY_API_SANDBOX = 'https://api.quickpay.net';
+    const QUICKPAY_API_LIVE = 'https://api.quickpay.net/?test_mode=true';
 
     /**
      * @var ObjectManager
@@ -158,7 +158,7 @@ class PaymentProcess
                 break;
             default:
                 $this->logger->warning(
-                    'paypal-payment-api',
+                    'quickpay-payment-api',
                     [
                         'ERROR' => 'Method not allowed!',
                     ]
@@ -194,7 +194,7 @@ class PaymentProcess
         $GLOBALS['TSFE']->getConfigArray();
 
         $this->conf = $this->typoScriptService->convertTypoScriptArrayToPlainArray(
-            $GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_cartpaypal.']
+            $GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_cartquickpay.']
         );
         $this->cartConf = $this->typoScriptService->convertTypoScriptArrayToPlainArray(
             $GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_cart.']
@@ -210,7 +210,7 @@ class PaymentProcess
         $rawPostData = file_get_contents('php://input');
 
         $this->logger->debug(
-            'paypal-payment-api',
+            'quickpal-payment-api',
             [
                 'rawPostData' => $rawPostData,
             ]
@@ -244,7 +244,7 @@ class PaymentProcess
             }
         } elseif (strcmp($this->curlResult, 'invalid') == 0) {
             $this->logger->warning(
-                'paypal-payment-api',
+                'quickpay-payment-api',
                 [
                     'curlResult' => 'INVALID',
                 ]
@@ -317,9 +317,9 @@ class PaymentProcess
      */
     protected function execCurlRequest(string $curlRequest): bool
     {
-        $paypalUrl = $this->getPaypalUrl();
+        $quickpayUrl = $this->getQuickPayUrl();
 
-        $ch = curl_init($paypalUrl);
+        $ch = curl_init($quickpayUrl);
         if ($ch == false) {
             return false;
         }
@@ -344,9 +344,9 @@ class PaymentProcess
 
         if ($curlError != 0) {
             $this->logger->warning(
-                'paypal-payment-api',
+                'quickpay-payment-api',
                 [
-                    'ERROR' => 'Can\'t connect to PayPal to validate IPN message',
+                    'ERROR' => 'Can\'t connect to QuickPay to validate IPN message',
                     'curl_error' => curl_error($ch),
                     'curl_request' => $curlRequest,
                     'curl_result' => $this->curlResult,
@@ -358,7 +358,7 @@ class PaymentProcess
         }
 
         $this->logger->debug(
-            'paypal-payment-api',
+            'quickpay-payment-api',
             [
                 'curl_info' => curl_getinfo($ch, CURLINFO_HEADER_OUT),
                 'curl_request' => $curlRequest,
@@ -376,13 +376,13 @@ class PaymentProcess
     /**
      * @return string
      */
-    protected function getPaypalUrl(): string
+    protected function getQuickPayUrl(): string
     {
         if ($this->conf['sandbox']) {
-            return self::PAYPAL_API_SANDBOX;
+            return self::QUICKPAY_API_SANDBOX;
         }
 
-        return self::PAYPAL_API_LIVE;
+        return self::QUICKPAY_API_LIVE;
     }
 
     protected function getOrderItem()

@@ -1,26 +1,31 @@
 {
-    "name": "extcode/cart-paypal",
+    "name": "extcode/cart-quickpay",
     "type": "typo3-cms-extension",
-    "description": "Shopping Cart(s) for TYPO3 - PayPal Payment Provider",
-    "homepage": "https://cart.extco.de",
+    "description": "Shopping Cart(s) for TYPO3 - QuickPay Payment Provider",
+    "homepage": "",
     "license": [
         "GPL-2.0+"
     ],
     "keywords": [
         "TYPO3 CMS",
         "Shopping Cart",
-        "PayPal",
+        "QuickPay",
         "cart"
     ],
     "authors": [
         {
-            "name": "Daniel Gohlke",
-            "email": "ext.cart@extco.de",
+            "name": "Daniel Alexander Damm",
+            "email": "dad@imh.dk",
+            "role": "Developer"
+        },
+        {
+            "name": "Martin Kristensen",
+            "email": "mkr@imh.dk",
             "role": "Developer"
         }
     ],
     "support": {
-        "issues": "https://github.com/extcode/cart_paypal/issues"
+        "issues": "https://github.com/Beltshassar/cart_quickpay/issues"
     },
     "require": {
         "php": ">=7.2.0 <7.3",
@@ -36,12 +41,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Extcode\\CartPaypal\\": "Classes"
+            "imhlab\\CartQuickpay\\": "Classes"
         }
     },
     "replace": {
-        "cart_paypal": "self.version",
-        "extcode/cart_paypal": "self.version"
+        "cart_quickpay": "self.version",
+        "imhlab/cart_quickpay": "self.version"
     },
     "config": {
         "vendor-dir": ".Build/vendor",
@@ -50,7 +55,7 @@
     "scripts": {
         "post-autoload-dump": [
             "mkdir -p .Build/Web/typo3conf/ext/",
-            "[ -L .Build/Web/typo3conf/ext/cart_paypal ] || ln -snvf ../../../../. .Build/Web/typo3conf/ext/cart_paypal"
+            "[ -L .Build/Web/typo3conf/ext/cart_quickpay ] || ln -snvf ../../../../. .Build/Web/typo3conf/ext/cart_quickpay"
         ]
     },
     "extra": {

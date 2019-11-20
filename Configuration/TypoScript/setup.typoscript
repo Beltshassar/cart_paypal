@@ -1,6 +1,6 @@
-cartPayPal = PAGE
-cartPayPal {
-    typeNum = {$plugin.tx_cartpaypal.redirectTypeNum}
+cartQuickPay = PAGE
+cartQuickPay {
+    typeNum = {$plugin.tx_cartQuickPay.redirectTypeNum}
 
     config {
         disableAllHeaderCode = 1
@@ -10,16 +10,16 @@ cartPayPal {
         no_cache = 1
     }
 
-    10 < tt_content.list.20.cartpaypal_cart
+    10 < tt_content.list.20.cartQuickPay_cart
     10.features.requireCHashArgumentForActionArguments = 0
 }
 
-plugin.tx_cartpaypal {
+plugin.tx_cartQuickPay {
     sandbox = 1
 
-    redirectTypeNum = {$plugin.tx_cartpaypal.redirectTypeNum}
+    redirectTypeNum = {$plugin.tx_cartQuickPay.redirectTypeNum}
 
-    sendEachItemToPaypal = 1
+    sendEachItemToQuickPay = 1
 
     finishers {
         order {

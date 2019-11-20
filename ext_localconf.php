@@ -5,7 +5,7 @@ defined('TYPO3_MODE') or die();
 // configure plugins
 
 \TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin(
-    'Extcode.cart_paypal',
+    'imhlab.cart_quickpay',
     'Cart',
     [
         'Order\Payment' => 'success, cancel',
@@ -20,14 +20,14 @@ defined('TYPO3_MODE') or die();
 
 $dispatcher = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Extbase\SignalSlot\Dispatcher::class);
 $dispatcher->connect(
-    \Extcode\Cart\Utility\PaymentUtility::class,
+    \imhlab\Cart\Utility\PaymentUtility::class,
     'handlePayment',
-    \Extcode\CartPaypal\Utility\PaymentUtility::class,
+    \imhlab\CartQuickPay\Utility\PaymentUtility::class,
     'handlePayment'
 );
 
 // configure eid dispatcher
 
 if (TYPO3_MODE === 'FE') {
-    $TYPO3_CONF_VARS['FE']['eID_include']['paypal-payment-api'] = \Extcode\CartPaypal\Utility\PaymentProcess::class . '::process';
+    $TYPO3_CONF_VARS['FE']['eID_include']['quickpay-payment-api'] = \imhlab\CartQuickPay\Utility\PaymentProcess::class . '::process';
 }

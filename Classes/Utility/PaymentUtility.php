@@ -1,6 +1,6 @@
 <?php
 
-namespace Extcode\CartPaypal\Utility;
+namespace imhlab\CartQuickPay\Utility;
 
 use Extcode\Cart\Domain\Repository\CartRepository;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -12,8 +12,8 @@ use TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager;
 
 class PaymentUtility
 {
-    const PAYPAL_API_SANDBOX = 'https://www.sandbox.paypal.com/webscr?';
-    const PAYPAL_API_LIVE = 'https://www.paypal.com/webscr?';
+    const QUICKPAY_API_SANDBOX = 'https://api.quickpay.net';
+    const QUICKPAY_API_LIVE = 'https://api.quickpay.net/?test_mode=true';
 
     /**
      * @var ObjectManager
@@ -87,7 +87,7 @@ class PaymentUtility
 
         $this->conf = $this->configurationManager->getConfiguration(
             \TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK,
-            'CartPaypal'
+            'CartQuickPay'
         );
 
         $this->cartConf = $this->configurationManager->getConfiguration(
@@ -105,7 +105,7 @@ class PaymentUtility
     {
         $this->orderItem = $params['orderItem'];
 
-        if ($this->orderItem->getPayment()->getProvider() === 'PAYPAL') {
+        if ($this->orderItem->getPayment()->getProvider() === 'QUICKPAY') {
             $params['providerUsed'] = true;
 
             $this->cart = $params['cart'];
@@ -142,10 +142,10 @@ class PaymentUtility
     protected function getQueryUrl(): string
     {
         if ($this->conf['sandbox']) {
-            return self::PAYPAL_API_SANDBOX;
+            return self::QUICKPAY_API_SANDBOX;
         }
 
-        return self::PAYPAL_API_LIVE;
+        return self::QUICKPAY_API_LIVE;
     }
 
     protected function getQuery()
@@ -174,7 +174,7 @@ class PaymentUtility
     {
         $this->paymentQuery['invoice'] = $this->cart->getOrderNumber();
 
-        if ($this->conf['sendEachItemToPaypal']) {
+        if ($this->conf['sendEachItemToQuickPay']) {
             $this->addEachItemsFromCartToQuery();
         } else {
             $this->addEntireCartToQuery();
@@ -257,7 +257,7 @@ class PaymentUtility
             ''
         );
 
-        $this->paymentQuery['item_name_1'] = $this->conf['sendEachItemToPaypalTitle'];
+        $this->paymentQuery['item_name_1'] = $this->conf['sendEachItemToQuickPayTitle'];
         $this->paymentQuery['quantity_1'] = 1;
         $this->paymentQuery['amount_1'] = $this->paymentQuery['mc_gross'];
     }
@@ -268,7 +268,7 @@ class PaymentUtility
     protected function getNotifyUrl(): string
     {
         $arguments = [
-            'eID' => 'paypal-payment-api',
+            'eID' => 'quickpay-payment-api',
         ];
 
         $uriBuilder = $this->getUriBuilder();
@@ -290,7 +290,7 @@ class PaymentUtility
         $pid = $this->cartConf['settings']['cart']['pid'];
 
         $arguments = [
-            'tx_cartpaypal_cart' => [
+            'tx_cartquickpay_cart' => [
                 'controller' => 'Order\Payment',
                 'order' => $this->orderItem->getUid(),
                 'action' => $action,

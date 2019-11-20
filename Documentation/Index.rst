@@ -3,7 +3,7 @@
 .. _start:
 
 ================
-EXT: Cart Paypal
+EXT: Cart QuickPay
 ================
 
 .. image:: Images/cart_paypal_logo.png

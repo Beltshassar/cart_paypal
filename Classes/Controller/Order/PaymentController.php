@@ -1,6 +1,6 @@
 <?php
 
-namespace Extcode\CartPaypal\Controller\Order;
+namespace imhlab\CartQuickPay\Controller\Order;
 
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
@@ -93,7 +93,7 @@ class PaymentController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControll
         $this->pluginSettings =
             $this->configurationManager->getConfiguration(
                 \TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK,
-                'CartPayPal'
+                'CartQuickPay'
             );
     }
 
@@ -121,7 +121,7 @@ class PaymentController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControll
             } else {
                 $this->addFlashMessage(
                     LocalizationUtility::translate(
-                        'tx_cartpaypal.controller.order.payment.action.success.error_occured',
+                        'tx_cartquickpay.controller.order.payment.action.success.error_occured',
                         $this->extensionName
                     ),
                     '',
@@ -131,7 +131,7 @@ class PaymentController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControll
         } else {
             $this->addFlashMessage(
                 LocalizationUtility::translate(
-                    'tx_cartpaypal.controller.order.payment.action.success.access_denied',
+                    'tx_cartquickpay.controller.order.payment.action.success.access_denied',
                     $this->extensionName
                 ),
                 '',
@@ -167,7 +167,7 @@ class PaymentController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControll
 
                 $this->addFlashMessage(
                     LocalizationUtility::translate(
-                        'tx_cartpaypal.controller.order.payment.action.cancel.successfully_canceled',
+                        'tx_cartquickpay.controller.order.payment.action.cancel.successfully_canceled',
                         $this->extensionName
                     ),
                     '',
@@ -179,7 +179,7 @@ class PaymentController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControll
             } else {
                 $this->addFlashMessage(
                     LocalizationUtility::translate(
-                        'tx_cartpaypal.controller.order.payment.action.cancel.error_occured',
+                        'tx_cartquickpay.controller.order.payment.action.cancel.error_occured',
                         $this->extensionName
                     ),
                     '',
@@ -189,7 +189,7 @@ class PaymentController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControll
         } else {
             $this->addFlashMessage(
                 LocalizationUtility::translate(
-                    'tx_cartpaypal.controller.order.payment.action.cancel.access_denied',
+                    'tx_cartquickpay.controller.order.payment.action.cancel.access_denied',
                     $this->extensionName
                 ),
                 '',

@@ -1,12 +1,12 @@
 <?php
 
 $EM_CONF[$_EXTKEY] = [
-    'title' => 'Cart - PayPal',
-    'description' => 'Shopping Cart(s) for TYPO3 - PayPal Payment Provider',
+    'title' => 'Cart - QuickPay',
+    'description' => 'Shopping Cart(s) for TYPO3 - QuickPay Payment Provider',
     'category' => 'services',
-    'author' => 'Daniel Gohlke',
-    'author_email' => 'ext.cart@extco.de',
-    'author_company' => 'extco.de UG (haftungsbeschränkt)',
+    'author' => 'Daniel Damm & Martin Kristensen',
+    'author_email' => 'dad@imh.dk',
+    'author_company' => 'Indre Mission',
     'shy' => '',
     'priority' => '',
     'module' => '',
@@ -17,7 +17,7 @@ $EM_CONF[$_EXTKEY] = [
     'modify_tables' => '',
     'clearCacheOnLoad' => 0,
     'lockType' => '',
-    'version' => '4.0.0',
+    'version' => '0.0.1',
     'constraints' => [
         'depends' => [
             'typo3' => '9.5.0-9.5.99',

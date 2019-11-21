@@ -1,6 +1,6 @@
 <?php
 
-namespace imhlab\CartQuickPay\Utility;
+namespace imhlab\CartQuickpay\Utility;
 error_log('PaymentUtility.php loaded - 4');
 use Extcode\Cart\Domain\Repository\CartRepository;
 use QuickPay\QuickPay;
@@ -66,7 +66,7 @@ class PaymentUtility
 
         $this->conf = $this->configurationManager->getConfiguration(
             \TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK,
-            'CartQuickPay'
+            'CartQuickpay'
         );
 
         $this->cartConf = $this->configurationManager->getConfiguration(

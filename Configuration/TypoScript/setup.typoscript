@@ -1,5 +1,5 @@
-cartQuickPay = PAGE
-cartQuickPay {
+cartQuickpay = PAGE
+cartQuickpay {
     typeNum = {$plugin.tx_cartquickpay.redirectTypeNum}
 
     config {

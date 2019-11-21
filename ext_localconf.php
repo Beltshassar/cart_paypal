@@ -22,7 +22,7 @@ $dispatcher = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Ex
 $dispatcher->connect(
     \Extcode\Cart\Utility\PaymentUtility::class,
     'handlePayment',
-    \imhlab\CartQuickPay\Utility\PaymentUtility::class,
+    \imhlab\CartQuickpay\Utility\PaymentUtility::class,
     'handlePayment'
 );
 

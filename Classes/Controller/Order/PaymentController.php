@@ -1,6 +1,6 @@
 <?php
 
-namespace imhlab\CartQuickPay\Controller\Order;
+namespace imhlab\CartQuickpay\Controller\Order;
 
 use Extcode\Cart\Domain\Repository\CartRepository;
 use Extcode\Cart\Domain\Repository\Order\PaymentRepository;
@@ -81,7 +81,7 @@ class PaymentController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControll
     {
         $this->pluginSettings = $this->configurationManager->getConfiguration(
             \TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK,
-            'CartQuickPay'
+            'CartQuickpay'
         );
 
         $this->cartPluginSettings = $this->configurationManager->getConfiguration(

@@ -29,11 +29,10 @@
     },
     "require": {
         "php": ">=7.2.0 <7.3",
-        "ext-curl": "*",
         "typo3/cms-core": "^9.5",
         "typo3/cms-extbase": "^9.5",
-        "typo3/cms-frontend": "^9.5",
-        "extcode/cart": "^6.3"
+        "extcode/cart": "^6.3",
+        "quickpay/quickpay-php-client": "^1.0"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^2.0",

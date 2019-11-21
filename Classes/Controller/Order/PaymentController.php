@@ -2,29 +2,31 @@
 
 namespace imhlab\CartQuickPay\Controller\Order;
 
+use Extcode\Cart\Domain\Repository\CartRepository;
+use Extcode\Cart\Domain\Repository\Order\PaymentRepository;
+use Extcode\Cart\Service\SessionHandler;
+use TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 class PaymentController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
 {
     /**
-     * @var \TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager
+     * @var PersistenceManager
      */
     protected $persistenceManager;
 
     /**
-     * Session Handler
-     *
-     * @var \Extcode\Cart\Service\SessionHandler
+     * @var SessionHandler
      */
     protected $sessionHandler;
 
     /**
-     * @var \Extcode\Cart\Domain\Repository\CartRepository
+     * @var CartRepository
      */
     protected $cartRepository;
 
     /**
-     * @var \Extcode\Cart\Domain\Repository\Order\PaymentRepository
+     * @var PaymentRepository
      */
     protected $paymentRepository;
 
@@ -36,70 +38,106 @@ class PaymentController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControll
     /**
      * @var array
      */
-    protected $cartPluginSettings;
+    protected $pluginSettings = [];
 
     /**
      * @var array
      */
-    protected $pluginSettings;
+    protected $cartPluginSettings = [];
 
     /**
-     * @param \TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager $persistenceManager
+     * @param PersistenceManager $persistenceManager
      */
-    public function injectPersistenceManager(
-        \TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager $persistenceManager
-    ) {
+    public function injectPersistenceManager(PersistenceManager $persistenceManager)
+    {
         $this->persistenceManager = $persistenceManager;
     }
 
     /**
-     * @param \Extcode\Cart\Service\SessionHandler $sessionHandler
+     * @param SessionHandler $sessionHandler
      */
-    public function injectSessionHandler(
-        \Extcode\Cart\Service\SessionHandler $sessionHandler
-    ) {
+    public function injectSessionHandler(SessionHandler $sessionHandler)
+    {
         $this->sessionHandler = $sessionHandler;
     }
 
     /**
-     * @param \Extcode\Cart\Domain\Repository\CartRepository $cartRepository
+     * @param CartRepository $cartRepository
      */
-    public function injectCartRepository(
-        \Extcode\Cart\Domain\Repository\CartRepository $cartRepository
-    ) {
+    public function injectCartRepository(CartRepository $cartRepository)
+    {
         $this->cartRepository = $cartRepository;
     }
 
     /**
-     * @param \Extcode\Cart\Domain\Repository\Order\PaymentRepository $paymentRepository
+     * @param PaymentRepository $paymentRepository
      */
-    public function injectPaymentRepository(
-        \Extcode\Cart\Domain\Repository\Order\PaymentRepository $paymentRepository
-    ) {
+    public function injectPaymentRepository(PaymentRepository $paymentRepository)
+    {
         $this->paymentRepository = $paymentRepository;
     }
 
-    /**
-     * Initialize Action
-     */
     protected function initializeAction()
     {
-        $this->cartPluginSettings =
-            $this->configurationManager->getConfiguration(
-                \TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK,
-                'Cart'
-            );
+        $this->pluginSettings = $this->configurationManager->getConfiguration(
+            \TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK,
+            'CartQuickPay'
+        );
 
-        $this->pluginSettings =
-            $this->configurationManager->getConfiguration(
-                \TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK,
-                'CartQuickPay'
-            );
+        $this->cartPluginSettings = $this->configurationManager->getConfiguration(
+            \TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK,
+            'Cart'
+        );
     }
 
-    /**
-     * Success Action
-     */
+    public function confirmAction()
+    {
+        if ($this->request->hasArgument('hash') && !empty($this->request->getArgument('hash'))) {
+            $hash = $this->request->getArgument('hash');
+
+            $querySettings = $this->objectManager->get(
+                \TYPO3\CMS\Extbase\Persistence\Generic\Typo3QuerySettings::class
+            );
+            $querySettings->setStoragePageIds([$this->cartPluginSettings['settings']['order']['pid']]);
+            $this->cartRepository->setDefaultQuerySettings($querySettings);
+
+            $this->cart = $this->cartRepository->findOneBySHash($hash);
+
+            if ($this->cart) {
+                $orderItem = $this->cart->getOrderItem();
+                $payment = $orderItem->getPayment();
+
+                if ($payment->getStatus() !== 'paid') {
+                    $payment->setStatus('paid');
+
+                    $this->paymentRepository->update($payment);
+                    $this->persistenceManager->persistAll();
+
+                    $this->invokeFinishers($orderItem, 'success');
+                }
+                $this->redirect('show', 'Cart\Order', 'Cart', ['orderItem' => $orderItem]);
+            } else {
+                $this->addFlashMessage(
+                    LocalizationUtility::translate(
+                        'tx_cartquickpay.controller.order.payment.action.confirm.error_occured',
+                        $this->extensionName
+                    ),
+                    '',
+                    \TYPO3\CMS\Core\Messaging\AbstractMessage::ERROR
+                );
+            }
+        } else {
+            $this->addFlashMessage(
+                LocalizationUtility::translate(
+                    'tx_cartquickpay.controller.order.payment.action.confirm.access_denied',
+                    $this->extensionName
+                ),
+                '',
+                \TYPO3\CMS\Core\Messaging\AbstractMessage::ERROR
+            );
+        }
+    }
+
     public function successAction()
     {
         if ($this->request->hasArgument('hash') && !empty($this->request->getArgument('hash'))) {
@@ -115,8 +153,16 @@ class PaymentController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControll
 
             if ($this->cart) {
                 $orderItem = $this->cart->getOrderItem();
+                $payment = $orderItem->getPayment();
 
-                $this->invokeFinishers($orderItem, 'success');
+                if ($payment->getStatus() !== 'paid') {
+                    $payment->setStatus('paid');
+
+                    $this->paymentRepository->update($payment);
+                    $this->persistenceManager->persistAll();
+
+                    $this->invokeFinishers($orderItem, 'success');
+                }
                 $this->redirect('show', 'Cart\Order', 'Cart', ['orderItem' => $orderItem]);
             } else {
                 $this->addFlashMessage(
@@ -140,9 +186,6 @@ class PaymentController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControll
         }
     }
 
-    /**
-     * Cancel Action
-     */
     public function cancelAction()
     {
         if ($this->request->hasArgument('hash') && !empty($this->request->getArgument('hash'))) {
@@ -175,6 +218,7 @@ class PaymentController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControll
                 );
 
                 $this->invokeFinishers($orderItem, 'cancel');
+
                 $this->redirect('show', 'Cart\Cart', 'Cart');
             } else {
                 $this->addFlashMessage(

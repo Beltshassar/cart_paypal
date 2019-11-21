@@ -8,11 +8,11 @@ defined('TYPO3_MODE') or die();
     'imhlab.cart_quickpay',
     'Cart',
     [
-        'Order\Payment' => 'success, cancel',
+        'Order\Payment' => 'confirm, success, cancel',
     ],
     // non-cacheable actions
     [
-        'Order\Payment' => 'success, cancel',
+        'Order\Payment' => 'confirm, success, cancel',
     ]
 );
 
@@ -26,8 +26,11 @@ $dispatcher->connect(
     'handlePayment'
 );
 
-// configure eid dispatcher
+// exclude parameters from cHash
 
-if (TYPO3_MODE === 'FE') {
-    $TYPO3_CONF_VARS['FE']['eID_include']['quickpay-payment-api'] = \imhlab\CartQuickPay\Utility\PaymentProcess::class . '::process';
-}
+$GLOBALS['TYPO3_CONF_VARS']['FE']['cacheHash']['excludedParameters'][] = 'TID';
+$GLOBALS['TYPO3_CONF_VARS']['FE']['cacheHash']['excludedParameters'][] = 'LANGUAGE';
+$GLOBALS['TYPO3_CONF_VARS']['FE']['cacheHash']['excludedParameters'][] = 'USER_FIELD';
+$GLOBALS['TYPO3_CONF_VARS']['FE']['cacheHash']['excludedParameters'][] = 'BRAND';
+$GLOBALS['TYPO3_CONF_VARS']['FE']['cacheHash']['excludedParameters'][] = 'ERRTEXT';
+$GLOBALS['TYPO3_CONF_VARS']['FE']['cacheHash']['excludedParameters'][] = 'EXTERNALSTATUS';

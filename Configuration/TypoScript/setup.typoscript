@@ -1,6 +1,6 @@
 cartQuickPay = PAGE
 cartQuickPay {
-    typeNum = {$plugin.tx_cartQuickPay.redirectTypeNum}
+    typeNum = {$plugin.tx_cartquickpay.redirectTypeNum}
 
     config {
         disableAllHeaderCode = 1
@@ -10,16 +10,14 @@ cartQuickPay {
         no_cache = 1
     }
 
-    10 < tt_content.list.20.cartQuickPay_cart
+    10 < tt_content.list.20.cartquickpay_cart
     10.features.requireCHashArgumentForActionArguments = 0
 }
 
-plugin.tx_cartQuickPay {
-    sandbox = 1
+plugin.tx_cartquickpay {
+    test = 1
 
-    redirectTypeNum = {$plugin.tx_cartQuickPay.redirectTypeNum}
-
-    sendEachItemToQuickPay = 1
+    redirectTypeNum = {$plugin.tx_cartquickpay.redirectTypeNum}
 
     finishers {
         order {

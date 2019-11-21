@@ -15,6 +15,18 @@
                 <source>Access denied!</source>
                 <target>Access denied!</target>
             </trans-unit>
+            <trans-unit id="tx_cartquickpay.controller.order.payment.action.confirm.successfully_paid">
+                <source>The order was successfully paid.</source>
+                <target>Die Bestellung wurde erfolgreich bezahlt.</target>
+            </trans-unit>
+            <trans-unit id="tx_cartquickpay.controller.order.payment.action.confirm.error_occured">
+                <source>An error occurred while updating the order.</source>
+                <target>Es ist ein Fehler bei der Aktualisierung der Bestellung aufgetreten.</target>
+            </trans-unit>
+            <trans-unit id="tx_cartquickpay.controller.order.payment.action.confirm.access_denied">
+                <source>Access denied!</source>
+                <target>Access denied!</target>
+            </trans-unit>
             <trans-unit id="tx_cartquickpay.controller.order.payment.action.cancel.successfully_canceled">
                 <source>The order has been canceled.</source>
                 <target>Die Bestellung wurde abgebrochen.</target>

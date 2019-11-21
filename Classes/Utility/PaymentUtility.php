@@ -1,7 +1,7 @@
 <?php
 
 namespace imhlab\CartQuickPay\Utility;
-
+error_log('PaymentUtility.php loaded - 4');
 use Extcode\Cart\Domain\Repository\CartRepository;
 use QuickPay\QuickPay;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -85,6 +85,7 @@ class PaymentUtility
     public function handlePayment(array $params): array
     {
 
+        error_log('Halløj - 88');
         $this->orderItem = $params['orderItem'];
 
         list($provider, $type, $brand) = array_map('trim', explode('-', $this->orderItem->getPayment()->getProvider()));

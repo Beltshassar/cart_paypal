@@ -1,5 +1,5 @@
 <?php
-
+error_log("qp-localconf:2");
 defined('TYPO3_MODE') or die();
 
 // configure plugins
@@ -20,7 +20,7 @@ defined('TYPO3_MODE') or die();
 
 $dispatcher = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Extbase\SignalSlot\Dispatcher::class);
 $dispatcher->connect(
-    \imhlab\Cart\Utility\PaymentUtility::class,
+    \Extcode\Cart\Utility\PaymentUtility::class,
     'handlePayment',
     \imhlab\CartQuickPay\Utility\PaymentUtility::class,
     'handlePayment'

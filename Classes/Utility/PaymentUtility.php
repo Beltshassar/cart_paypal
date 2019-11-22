@@ -85,18 +85,20 @@ class PaymentUtility
     public function handlePayment(array $params): array
     {
 
-        error_log('Halløj - 88');
         $this->orderItem = $params['orderItem'];
-
+        error_log("order number: ". $this->orderItem->getOrderNumber());
+        error_log("total gross: ". $this->orderItem->getTotalGross());
+                
         list($provider, $type, $brand) = array_map('trim', explode('-', $this->orderItem->getPayment()->getProvider()));
-
+        
         if ($provider === 'QUICKPAY') {
             $params['providerUsed'] = true;
 
             try {
                 //Initialize client
-                $client = new QuickPay(":api-key-here");
-            
+                $api_user = "9c3c2887ca63a26e6e432680926a7038e40dc759ff1ce979c435aa7000e36aef";
+                $client = new QuickPay(":{$api_user}");
+
                 //Create payment
                 $payment = $client->request->post('/payments', [
                     'order_id' => $this->orderItem->getOrderNumber(),
@@ -104,6 +106,7 @@ class PaymentUtility
                 ]);
             
                 $status = $payment->httpStatus();
+
             
                 //Determine if payment was created successfully
                 if ($status === 201) {
@@ -116,20 +119,25 @@ class PaymentUtility
                     //Issue a put request to create payment link
                     $link = $client->request->put($endpoint, [
 //                        'amount' => 100 //amount in cents
-                        'amount' => $this->orderItem->getTotalGross()
+                        'amount' => $this->orderItem->getTotalGross()*100
                     ]);
             
                     //Determine if payment link was created succesfully
                     if ($link->httpStatus() === 200) {
                         //Get payment link url
-                        echo $link->asObject()->url;
+                        $paymentPageURL = $link->asObject()->url;
+                        header('Location: ' . $paymentPageURL);
+
                     }
                 }
             } catch (\Exception $e) {
-                echo $e->getMessage();
+                error_log("139: errormsg: ");
+                var_dump($e->getMessage());
             }
 
         }
+
+        return [$params];
 
     }
 

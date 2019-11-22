@@ -1,5 +1,4 @@
 <?php
-error_log("qp-localconf:2");
 defined('TYPO3_MODE') or die();
 
 // configure plugins

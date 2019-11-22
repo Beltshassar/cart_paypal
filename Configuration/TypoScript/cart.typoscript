@@ -1,0 +1,14 @@
+plugin.tx_cart {
+
+    settings {
+        cart {
+            pid = 45
+            isNetCart = 0
+        }
+        order {
+            pid = 46
+        }
+
+        addToCartByAjax = false
+    }
+}

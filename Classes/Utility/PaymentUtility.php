@@ -1,7 +1,7 @@
 <?php
 
 namespace imhlab\CartQuickpay\Utility;
-error_log('PaymentUtility.php loaded - 4');
+
 use Extcode\Cart\Domain\Repository\CartRepository;
 use QuickPay\QuickPay;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -86,75 +86,9 @@ class PaymentUtility
     {
 
         $this->orderItem = $params['orderItem'];
-        error_log("order number: ". $this->orderItem->getOrderNumber());
-        error_log("total gross: ". $this->orderItem->getTotalGross());
-                
+                        
         list($provider, $type, $brand) = array_map('trim', explode('-', $this->orderItem->getPayment()->getProvider()));
         
-        if ($provider === 'QUICKPAY') {
-            $params['providerUsed'] = true;
-
-            try {
-                //Initialize client
-                $api_user = "9c3c2887ca63a26e6e432680926a7038e40dc759ff1ce979c435aa7000e36aef";
-                $client = new QuickPay(":{$api_user}");
-
-                //Create payment
-                $payment = $client->request->post('/payments', [
-                    'order_id' => $this->orderItem->getOrderNumber(),
-                    'currency' => 'DKK',
-                ]);
-            
-                $status = $payment->httpStatus();
-
-            
-                //Determine if payment was created successfully
-                if ($status === 201) {
-            
-                    $paymentObject = $payment->asObject();
-            
-                    //Construct url to create payment link
-                    $endpoint = sprintf("/payments/%s/link", $paymentObject->id);
-            
-                    //Issue a put request to create payment link
-                    $link = $client->request->put($endpoint, [
-//                        'amount' => 100 //amount in cents
-                        'amount' => $this->orderItem->getTotalGross()*100
-                    ]);
-            
-                    //Determine if payment link was created succesfully
-                    if ($link->httpStatus() === 200) {
-                        //Get payment link url
-                        $paymentPageURL = $link->asObject()->url;
-                        header('Location: ' . $paymentPageURL);
-
-                    }
-                }
-            } catch (\Exception $e) {
-                error_log("139: errormsg: ");
-                var_dump($e->getMessage());
-            }
-
-        }
-
-        return [$params];
-
-    }
-
-
-
-    /**
-     * @param array $params
-     *
-     * @return array
-     */
-    /*
-    public function handlePayment(array $params): array
-    {
-        $this->orderItem = $params['orderItem'];
-
-        list($provider, $type, $brand) = array_map('trim', explode('-', $this->orderItem->getPayment()->getProvider()));
-
         if ($provider === 'QUICKPAY') {
             $params['providerUsed'] = true;
 
@@ -171,50 +105,55 @@ class PaymentUtility
             $cartRepository->add($cart);
             $this->persistenceManager->persistAll();
 
-            $quickpay = new QuickPay(
-                $this->conf['merchantId'],
-                $this->conf['soapPassword'],
-                $this->conf['test'],
-                $this->conf['enableDebug'],
-                null,
-                null,
-                null,
-                null,
-                null,
-                $this->conf['enableDebugCurl'],
-                null,
-                null,
-                null,
-                'quickpay.log',
-                \TYPO3\CMS\Core\Core\Environment::getVarPath() . '/log',
-                'quickpay_curl.log'
-            );
+            try {
+                //Initialize client
+                $api_user = $this->conf['settings']['api_user'];
 
-            $mdxi = new QuickpayOrder();
-            $mdxi->Order->Tid = $this->orderItem->getOrderNumber();
+                $client = new QuickPay(":{$api_user}");
 
-            if (!empty($type)) {
-                $mdxi->Order->PaymentTypes->setEnable('true');
-                $mdxi->Order->PaymentTypes->Payment(1)->setType($type);
-                if (!empty($brand)) {
-                    $mdxi->Order->PaymentTypes->Payment(1)->setBrand($brand);
+                //Create payment
+                $payment = $client->request->post('/payments', [
+                    'order_id' => $this->orderItem->getOrderNumber(),
+                    'currency' => 'DKK',
+                ]);
+            
+                $status = $payment->httpStatus();
+
+                //Determine if payment was created successfully
+                if ($status === 201) {
+            
+                    $paymentObject = $payment->asObject();
+            
+                    //Construct url to create payment link
+                    $endpoint = sprintf("/payments/%s/link", $paymentObject->id);
+            
+                    //Issue a put request to create payment link
+                    $link = $client->request->put($endpoint, [
+                        'amount' => $this->orderItem->getTotalGross()*100,
+                        'continueurl' => $this->getUrl('success', $cart->getSHash()),
+                        'cancel_url' => $this->getUrl('cancel', $cart->getFHash())
+//                        'callback_url' => $this->getUrl('confirm', $cart->getSHash())
+                        ]);
+            
+                    //Determine if payment link was created succesfully
+                    if ($link->httpStatus() === 200) {
+                        //Get payment link url
+                        $paymentPageURL = $link->asObject()->url;
+                        header('Location: ' . $paymentPageURL);
+
+                    }
+
                 }
+
+            } catch (\Exception $e) {
+
             }
-            $mdxi->Order->Price = $this->orderItem->getTotalGross();
 
-            $mdxi->Order->URL->Success = $this->getUrl('success', $cart->getSHash());
-            $mdxi->Order->URL->Error = $this->getUrl('cancel', $cart->getFHash());
-            $mdxi->Order->URL->Confirmation = $this->getUrl('confirm', $cart->getSHash());
-
-            $paymentPageURL = $quickpay->paymentPage($mdxi)->getLocation();
-
-            header('Location: ' . $paymentPageURL);
         }
 
         return [$params];
-    }
 
-*/
+    }
 
     /**
      * Builds a return URL to Cart order controller action

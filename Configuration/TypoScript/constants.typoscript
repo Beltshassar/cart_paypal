@@ -1,3 +1,8 @@
 plugin.tx_cartquickpay {
     redirectTypeNum = 2278109
+
+    settings {
+        # cat=Quickpay: settings; type=string; label=API user: Look up the "api user" at manager.quickpay.net
+        api_user = 
+    }
 }

@@ -15,7 +15,6 @@ cartQuickpay {
 }
 
 plugin.tx_cartquickpay {
-    test = 1
 
     redirectTypeNum = {$plugin.tx_cartquickpay.redirectTypeNum}
 
@@ -30,6 +29,10 @@ plugin.tx_cartquickpay {
                 }
             }
         }
+    }
+
+    settings {
+        api_user = {$plugin.tx_cartquickpay.settings.api_user}
     }
 }
 

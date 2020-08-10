@@ -1,6 +1,6 @@
 <?php
 
-namespace imhlab\CartQuickpay\Utility;
+namespace Imhlab\CartQuickpay\Utility;
 
 use Extcode\Cart\Domain\Repository\CartRepository;
 use QuickPay\QuickPay;

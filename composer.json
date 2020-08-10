@@ -40,7 +40,7 @@
     },
     "autoload": {
         "psr-4": {
-            "imhlab\\CartQuickpay\\": "Classes"
+            "Imhlab\\CartQuickpay\\": "Classes"
         }
     },
     "replace": {

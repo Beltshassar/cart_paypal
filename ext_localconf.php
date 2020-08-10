@@ -4,7 +4,7 @@ defined('TYPO3_MODE') or die();
 // configure plugins
 
 \TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin(
-    'imhlab.cart_quickpay',
+    'Imhlab.cart_quickpay',
     'Cart',
     [
         'Order\Payment' => 'confirm, success, cancel',
@@ -21,7 +21,7 @@ $dispatcher = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Ex
 $dispatcher->connect(
     \Extcode\Cart\Utility\PaymentUtility::class,
     'handlePayment',
-    \imhlab\CartQuickpay\Utility\PaymentUtility::class,
+    \Imhlab\CartQuickpay\Utility\PaymentUtility::class,
     'handlePayment'
 );
 

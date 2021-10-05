@@ -86,7 +86,7 @@ class PaymentUtility
     {
 
         $this->orderItem = $params['orderItem'];
-                        
+        
         list($provider, $type, $brand) = array_map('trim', explode('-', $this->orderItem->getPayment()->getProvider()));
         
         if ($provider === 'QUICKPAY') {
@@ -108,20 +108,65 @@ class PaymentUtility
             try {
                 //Initialize client
                 $api_user = $this->conf['settings']['api_user'];
-
+                
                 $client = new QuickPay(":{$api_user}");
+
+                $billingAddress = $this->orderItem->getBillingAddress()->toArray();
 
                 //Create payment
                 $payment = $client->request->post('/payments', [
                     'order_id' => $this->orderItem->getOrderNumber(),
                     'currency' => 'DKK',
+                    // Umiddelbart bliver værdierne kun vist i Quickpay admin interfacet, men altså ikke på betalingssiden.
+                    'invoice_address[name]' => $billingAddress['firstName'] .' '. $billingAddress['lastName'],
+                    //'invoice_address[att]' => 'invoice.att',
+                    'invoice_address[company_name]' => $billingAddress['company'],
+                    'invoice_address[street]' => $billingAddress['street'],
+                    //'invoice_address[house_number]' => $billingAddress['streetNumber'],
+                    //'invoice_address[house_extension]' => 'invoice.house_extension',
+                    'invoice_address[city]' => $billingAddress['city'],
+                    'invoice_address[zip_code]' => $billingAddress['zip'],
+                    //'invoice_address[region]' => 'invoice.region',
+                    //'invoice_address[vat_no]' => 'invoice.vat_no',
+                    'invoice_address[phone_number]' => $billingAddress['phone'],
+                    //'invoice_address[mobile_number]' => 'invoice.mobile_number',
+                    'invoice_address[email]' => $billingAddress['email'],
+                    // 'shipping_address[name]' => $shippingAddress['firstName'] .' '. $shippingAddress['lastName'],
+                    // 'shipping_address[att]' => 'shipping.att',
+                    // 'shipping_address[company_name]' => $shippingAddress['company'],
+                    // 'shipping_address[street]' => $shippingAddress['street'],
+                    // 'shipping_address[house_number]' => 'shipping.house_number',
+                    // 'shipping_address[house_extension]' => 'shipping.house_extension',
+                    // 'shipping_address[city]' => $shippingAddress['city'],
+                    // 'shipping_address[zip_code]' => $shippingAddress['zip'],
+                    // 'shipping_address[region]' => 'shipping.region',
+                    // 'shipping_address[vat_no]' => 'shipping.vat_no',
+                    // 'shipping_address[phone_number]' => $shippingAddress['phone'],
+                    // 'shipping_address[mobile_number]' => 'shipping.mobile_number',
+                    // 'shipping_address[email]' => $shippingAddress['email'],
+//                    'branding_id' => 'branding_id',
+                    // 'basket[][qty]' => 'basket.qty',
+//                    'basket[][item_no]' => 'basket.item_no',
+//                    'basket[][item_name]' => 'basket.item_name',
+//                    'basket[][item_price]' => 'basket.item_price',
+//                    'basket[][vat_rate]' => 'basket.vat_rate',
+                    // 'shipping[method]' => 'shipping.method',
+//                    'shipping[company]' => 'shipping.company',
+//                    'shipping[amount]' => 1,
+//                    'shipping[vat_rate]' => 'shipping.vat_rate',
+//                    'shipping[tracking_number]' => 'shipping.tracking_number',
+//                    'shipping[tracking_url]' => 'shipping.tracking_url',
+                    'shopsystem[name]' => 'extcode/Cart',
+                    // 'shopsystem[version]' => 'shopsystem.version',
+                    // 'variables' => 'variables',
+                    // 'text_on_statement' => 'text_on_statement',
+
                 ]);
-            
+
                 $status = $payment->httpStatus();
 
                 //Determine if payment was created successfully
                 if ($status === 201) {
-            
                     $paymentObject = $payment->asObject();
             
                     //Construct url to create payment link
@@ -140,19 +185,23 @@ class PaymentUtility
                         //Get payment link url
                         $paymentPageURL = $link->asObject()->url;
                         header('Location: ' . $paymentPageURL);
-
                     }
+                } else {
+                    error_log('httpStatus: '. $status);
+                    error_log('Quickpay parameterfejl i API ');
+                    $failureURL = $this->getUrl('cancel', $cart->getFHash());
+                    header('Location: ' . $failureURL);
 
+//                    die("HTTPSTATUS: Error: call to API failed with status $status");
                 }
-
             } catch (\Exception $e) {
-
+                error_log('Exception catcher: ');
+                error_log($e);
+                die("EXCEPTION: Error: call to API failed with status $e");
             }
-
         }
 
         return [$params];
-
     }
 
     /**

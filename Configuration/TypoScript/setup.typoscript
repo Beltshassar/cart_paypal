@@ -21,6 +21,12 @@ plugin.tx_cartquickpay {
     finishers {
         order {
             success {
+                327 {
+                    class = IMHLab\CartProductsUsergroup\Domain\Finisher\Order\UsergroupProductFinisher
+                }
+                350 {
+                    class = Extcode\CartPdf\Domain\Finisher\Order\DocumentFinisher
+                }
                 400 {
                     class = Extcode\Cart\Domain\Finisher\Order\EmailFinisher
                 }
